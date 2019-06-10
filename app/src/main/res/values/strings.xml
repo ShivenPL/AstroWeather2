@@ -1,4 +1,51 @@
 <resources>
     <string name="app_name">AstroWeather 2</string>
     <string name="action_settings">Settings</string>
+
+    <string-array name="temperatureUnitsName">
+        <item>Kelvin</item>
+        <item>Celcjusz</item>
+        <item>Fahrenheit</item>
+    </string-array>
+
+    <string-array name="temperatureUnitsValues">
+        <item>K</item>
+        <item>C</item>
+        <item>F</item>
+    </string-array>
+
+    <string-array name="windUnitsName">
+        <item>Metr na sekundę (m/s)</item>
+        <item>Kilometr na godzinę (km/h)</item>
+        <item>Mila na godzinę (mph)</item>
+    </string-array>
+
+    <string-array name="windUnitsValues">
+        <item>ms</item>
+        <item>kmh</item>
+        <item>mph</item>
+    </string-array>
+
+    <string-array name="pressureUnitsName">
+        <item>Hektopaskale (hPa)</item>
+        <item>Cale słupka rtęci (in. Hg)</item>
+    </string-array>
+
+    <string-array name="pressureUnitsValues">
+        <item>hpa</item>
+        <item>inhg</item>
+    </string-array>
+
+
+    <string-array name="visibilityUnitsName">
+        <item>Metr</item>
+        <item>Kilometr</item>
+        <item>Mila</item>
+    </string-array>
+
+    <string-array name="visibilityUnitsValues">
+        <item>metr</item>
+        <item>kilometr</item>
+        <item>mila</item>
+    </string-array>
 </resources>

@@ -22,5 +22,39 @@
             android:inputType="numberSigned|numberDecimal"/>
     </PreferenceCategory>
 
+    <PreferenceCategory android:title="Jednostki miary">
+        <ListPreference
+            android:key="temperature"
+            android:title="Temperatura - jednostka"
+            android:entries="@array/temperatureUnitsName"
+            android:entryValues="@array/temperatureUnitsValues"
+            android:defaultValue="C"
+            android:summary="%s"/>
+
+        <ListPreference
+            android:key="wind"
+            android:title="Wiatr - jednostka"
+            android:entries="@array/windUnitsName"
+            android:entryValues="@array/windUnitsValues"
+            android:defaultValue="kmh"
+            android:summary="%s"/>
+
+        <ListPreference
+            android:key="pressure"
+            android:title="Ciśneinie - jednostka"
+            android:entries="@array/pressureUnitsName"
+            android:entryValues="@array/pressureUnitsValues"
+            android:defaultValue="hpa"
+            android:summary="%s"/>
+
+        <ListPreference
+            android:key="visibility"
+            android:title="Widocznosc - jednostka"
+            android:entries="@array/visibilityUnitsName"
+            android:entryValues="@array/visibilityUnitsValues"
+            android:defaultValue="metr"
+            android:summary="%s"/>
+    </PreferenceCategory>
+
 
 </PreferenceScreen>
