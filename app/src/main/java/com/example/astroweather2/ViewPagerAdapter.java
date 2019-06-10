@@ -16,8 +16,10 @@ public class ViewPagerAdapter extends FragmentPagerAdapter {
         {
             case 0:
                 return new BasicData();
-            /*case 1:
-                return null; //new MoonFragment();*/
+            case 1:
+                return new AdditionalData();
+            case 2:
+                return new PredictionsData();
             default:
                 return null;
         }
@@ -26,6 +28,6 @@ public class ViewPagerAdapter extends FragmentPagerAdapter {
 
     @Override
     public int getCount() {
-        return 1;
+        return 3;
     }
 }
