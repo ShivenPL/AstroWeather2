@@ -2,24 +2,16 @@
 <PreferenceScreen
     xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <PreferenceCategory android:title="Położenie">
+    <PreferenceCategory android:title="Miasto">
 
         <EditTextPreference
-            android:id="@+id/latitude"
-            android:defaultValue="51.753607"
-            android:key="latitude"
+            android:id="@+id/city"
+            android:defaultValue="Lodz"
+            android:key="city"
             android:selectAllOnFocus="true"
             android:singleLine="true"
-            android:title="Szerokość geograficzna"
-            android:inputType="numberSigned|numberDecimal"/>
-        <EditTextPreference
-            android:id="@+id/longitude"
-            android:defaultValue="19.451801"
-            android:key="longitude"
-            android:selectAllOnFocus="true"
-            android:singleLine="true"
-            android:title="Długość geograficzna"
-            android:inputType="numberSigned|numberDecimal"/>
+            android:title="Podaj miasto"
+            android:inputType="text"/>
     </PreferenceCategory>
 
     <PreferenceCategory android:title="Jednostki miary">
