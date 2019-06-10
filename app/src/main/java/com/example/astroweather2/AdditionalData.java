@@ -34,7 +34,7 @@ public class AdditionalData extends Fragment {
     ProgressBar loader;
     Typeface weatherFont;
     String city;
-    String OPEN_WEATHER_MAP_API = "51a8befffa6579e02cb19d94f916c4e7";
+    String OPEN_WEATHER_MAP_API = "e14888cedb31aa303da59a843fe82e51";
 
     @Nullable
     @Override
@@ -59,16 +59,6 @@ public class AdditionalData extends Fragment {
         city = sharedPreferences.getString("city", "Lodz");
         city = city + ", PL";
         taskLoadUp(city);
-
-        rootView.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
-            @Override
-            public void onLayoutChange(View v, int left, int top, int right, int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
-                SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
-                city = sharedPreferences.getString("city", "Lodz");
-                city = city + ", PL";
-                taskLoadUp(city);
-            }
-        });
 
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -158,7 +148,9 @@ public class AdditionalData extends Fragment {
                     JSONObject wind = json.getJSONObject("wind");
                     JSONObject clouds = json.getJSONObject("clouds");
                     DateFormat df = DateFormat.getDateTimeInstance();
-                    SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
+
+
+                    SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
 
 
                     cityField.setText(json.getString("name").toUpperCase(Locale.US) + ", " + json.getJSONObject("sys").getString("country"));
