@@ -25,13 +25,16 @@ import java.sql.Date;
 import java.text.DateFormat;
 import java.util.Locale;
 
+import static java.lang.Integer.parseInt;
+
 public class BasicData extends Fragment {
 
-    TextView cityField, detailsField, currentTemperatureField, humidity_field, pressure_field, weatherIcon, updatedField;
+    TextView cityField, detailsField, currentTemperatureField, pressure_field, weatherIcon, updatedField;
     ProgressBar loader;
     Typeface weatherFont;
     String city;
     String OPEN_WEATHER_MAP_API = "51a8befffa6579e02cb19d94f916c4e7";
+
 
     @Nullable
     @Override
@@ -45,7 +48,6 @@ public class BasicData extends Fragment {
         updatedField = rootView.findViewById(R.id.updated_field);
         detailsField = rootView.findViewById(R.id.details_field);
         currentTemperatureField = rootView.findViewById(R.id.current_temperature_field);
-        humidity_field = rootView.findViewById(R.id.humidity_field);
         pressure_field = rootView.findViewById(R.id.pressure_field);
         weatherIcon = rootView.findViewById(R.id.weather_icon);
         weatherFont = ResourcesCompat.getFont(getContext(), R.font.weathericons_regular_webfont);
@@ -55,6 +57,16 @@ public class BasicData extends Fragment {
         city = sharedPreferences.getString("city", "Lodz");
         city = city + ", PL";
         taskLoadUp(city);
+
+        rootView.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
+            @Override
+            public void onLayoutChange(View v, int left, int top, int right, int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
+                SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
+                city = sharedPreferences.getString("city", "Lodz");
+                city = city + ", PL";
+                taskLoadUp(city);
+            }
+        });
 
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -112,12 +124,21 @@ public class BasicData extends Fragment {
                     JSONObject details = json.getJSONArray("weather").getJSONObject(0);
                     JSONObject main = json.getJSONObject("main");
                     DateFormat df = DateFormat.getDateTimeInstance();
+                    SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
+
 
                     cityField.setText(json.getString("name").toUpperCase(Locale.US) + ", " + json.getJSONObject("sys").getString("country"));
                     detailsField.setText(details.getString("description").toUpperCase(Locale.US));
-                    currentTemperatureField.setText(String.format("%.2f", main.getDouble("temp")) + "°");
-                    humidity_field.setText("Humidity: " + main.getString("humidity") + "%");
-                    pressure_field.setText("Pressure: " + main.getString("pressure") + " hPa");
+                    String temperatureChoice = sharedPreferences.getString("temperature", "C");
+                    if(temperatureChoice.equals("C"))
+                        currentTemperatureField.setText(String.format("%.2f", main.getDouble("temp")) + "°C");
+                    else
+                        currentTemperatureField.setText(String.format("%.2f", main.getDouble("temp") * 1.8 + 32) + "°F");
+                    String pressureChoice = sharedPreferences.getString("pressure", "hpa");
+                    if(pressureChoice.equals("hpa"))
+                        pressure_field.setText("Ciśnienie: " + main.getString("pressure") + " hPa");
+                    else
+                        pressure_field.setText("Ciśnienie: " + String.format("%.2f",(parseInt(main.getString("pressure")) / 33.86)) + " in. Hg");
                     updatedField.setText(df.format(new Date(json.getLong("dt") * 1000)));
                     weatherIcon.setText(Html.fromHtml(Function.setWeatherIcon(details.getInt("id"),
                             json.getJSONObject("sys").getLong("sunrise") * 1000,

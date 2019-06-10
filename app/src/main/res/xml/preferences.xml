@@ -36,7 +36,7 @@
             android:title="Ciśneinie - jednostka"
             android:entries="@array/pressureUnitsName"
             android:entryValues="@array/pressureUnitsValues"
-            android:defaultValue="hpa"
+            android:defaultValue="ms"
             android:summary="%s"/>
 
         <ListPreference

@@ -3,13 +3,11 @@
     <string name="action_settings">Settings</string>
 
     <string-array name="temperatureUnitsName">
-        <item>Kelvin</item>
         <item>Celcjusz</item>
         <item>Fahrenheit</item>
     </string-array>
 
     <string-array name="temperatureUnitsValues">
-        <item>K</item>
         <item>C</item>
         <item>F</item>
     </string-array>
