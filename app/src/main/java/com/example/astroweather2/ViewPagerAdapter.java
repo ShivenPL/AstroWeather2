@@ -19,7 +19,7 @@ public class ViewPagerAdapter extends FragmentPagerAdapter {
             case 1:
                 return new AdditionalData();
             case 2:
-                return new PredictionsData();
+                return new ThreeDaysData();
             default:
                 return null;
         }
