@@ -42,6 +42,7 @@ public class AdditionalData extends Fragment {
         super.onCreateView(inflater, container, savedInstanceState);
         View rootView = inflater.inflate(R.layout.additionaldata_layout, container, false);
 
+        /*
         final SwipeRefreshLayout swipeRefreshLayout = rootView.findViewById(R.id.swipe);
         loader = rootView.findViewById(R.id.loader);
         cityField = rootView.findViewById(R.id.city_field);
@@ -79,11 +80,11 @@ public class AdditionalData extends Fragment {
             }
         });
 
-
+*/
 
         return rootView;
     }
-
+/*
     public void taskLoadUp(String query) {
         if (Function.isNetworkAvailable(getActivity())) {
             AdditionalData.DownloadWeather task = new AdditionalData.DownloadWeather();
@@ -194,5 +195,5 @@ public class AdditionalData extends Fragment {
 
 
 
-    }
+    }*/
 }
