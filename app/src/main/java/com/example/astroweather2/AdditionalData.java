@@ -17,16 +17,13 @@ import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import java.sql.Date;
 import java.text.DateFormat;
 import java.util.Locale;
 
 import static java.lang.Double.parseDouble;
-import static java.lang.Integer.parseInt;
 
 public class AdditionalData extends Fragment {
 
@@ -42,7 +39,6 @@ public class AdditionalData extends Fragment {
         super.onCreateView(inflater, container, savedInstanceState);
         View rootView = inflater.inflate(R.layout.additionaldata_layout, container, false);
 
-        /*
         final SwipeRefreshLayout swipeRefreshLayout = rootView.findViewById(R.id.swipe);
         loader = rootView.findViewById(R.id.loader);
         cityField = rootView.findViewById(R.id.city_field);
@@ -80,11 +76,18 @@ public class AdditionalData extends Fragment {
             }
         });
 
-*/
-
         return rootView;
     }
-/*
+
+    @Override
+    public void onResume() {
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
+        String city2 = sharedPreferences.getString("city", "Lodz") + ", PL";
+        if(city.equals(city2)){}
+        else {taskLoadUp(city2); city = city2;}
+        super.onResume();
+    }
+
     public void taskLoadUp(String query) {
         if (Function.isNetworkAvailable(getActivity())) {
             AdditionalData.DownloadWeather task = new AdditionalData.DownloadWeather();
@@ -195,5 +198,5 @@ public class AdditionalData extends Fragment {
 
 
 
-    }*/
+    }
 }

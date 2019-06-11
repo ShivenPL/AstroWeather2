@@ -25,7 +25,6 @@ import java.sql.Date;
 import java.text.DateFormat;
 import java.util.Locale;
 
-import static java.lang.Double.parseDouble;
 import static java.lang.Integer.parseInt;
 
 public class BasicData extends Fragment {
@@ -57,9 +56,7 @@ public class BasicData extends Fragment {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
         city = sharedPreferences.getString("city", "Lodz");
         city = city + ", PL";
-
         taskLoadUp(city);
-
 
 
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -75,24 +72,6 @@ public class BasicData extends Fragment {
                         city = sharedPreferences.getString("city", "Lodz");
                         city = city + ", PL";
                         taskLoadUp(city);
-
-
-                        DownloadWeather field = DownloadWeather.getInstance();
-
-                        cityField.setText(field.getCity());
-                        detailsField.setText(field.getDetail());
-                        String temperatureChoice = sharedPreferences.getString("temperature", "C");
-                        if(temperatureChoice.equals("C"))
-                            currentTemperatureField.setText(String.format("%.2f", parseDouble(field.getCurrentTemperature())) + "°C");
-                        else
-                            currentTemperatureField.setText(String.format("%.2f",parseDouble(field.getCurrentTemperature()) * 1.8 + 32) + "°F");
-                        String pressureChoice = sharedPreferences.getString("pressure", "hpa");
-                        if(pressureChoice.equals("hpa"))
-                            pressure_field.setText("Ciśnienie: " + field.getPressure() + " hPa");
-                        else
-                            pressure_field.setText("Ciśnienie: " + String.format("%.2f",(parseInt(field.getPressure()) / 33.86)) + " in. Hg");
-                        updatedField.setText(field.getUpdated());
-                        weatherIcon.setText(field.getWeatherIcon());
                     }
                 }, 1500);
 
@@ -104,9 +83,18 @@ public class BasicData extends Fragment {
         return rootView;
     }
 
+    @Override
+    public void onResume() {
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
+        String city2 = sharedPreferences.getString("city", "Lodz") + ", PL";
+        if(city.equals(city2)){}
+        else {taskLoadUp(city2); city = city2;}
+        super.onResume();
+    }
+
     public void taskLoadUp(String query) {
         if (Function.isNetworkAvailable(getActivity())) {
-            DownloadWeather task = DownloadWeather.getInstance();//.getClone();
+            DownloadWeather task = new DownloadWeather();
             task.execute(query);
         } else {
             Toast.makeText(getActivity(), "No Internet Connection", Toast.LENGTH_LONG).show();
@@ -114,7 +102,7 @@ public class BasicData extends Fragment {
     }
 
 
-/*
+
     class DownloadWeather extends AsyncTask< String, Void, String > {
         @Override
         protected void onPreExecute() {
@@ -169,5 +157,4 @@ public class BasicData extends Fragment {
 
 
     }
-    */
 }
