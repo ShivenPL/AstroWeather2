@@ -86,5 +86,34 @@ public class Function {
         return icon;
     }
 
+    public static String setWeatherIconThreeDays(int actualId, long sunrise, long sunset){
+        int id = actualId / 100;
+        String icon = "";
+        if(actualId == 800){
+            long currentTime = new Date().getTime();
+            if(currentTime>=1061316680*1000 && currentTime<1961316680*1000) {
+                icon = "&#xf02e;";
+            } else {
+                icon = "&#xf00d;";
+            }
+        } else {
+            switch(id) {
+                case 2 : icon = "&#xf01e;";
+                    break;
+                case 3 : icon = "&#xf01c;";
+                    break;
+                case 7 : icon = "&#xf014;";
+                    break;
+                case 8 : icon = "&#xf013;";
+                    break;
+                case 6 : icon = "&#xf01b;";
+                    break;
+                case 5 : icon = "&#xf019;";
+                    break;
+            }
+        }
+        return icon;
+    }
+
 
 }

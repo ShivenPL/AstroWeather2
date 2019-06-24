@@ -6,7 +6,7 @@
 
         <EditTextPreference
             android:id="@+id/city"
-            android:defaultValue="Lodz"
+            android:defaultValue="Lodz,PL"
             android:key="city"
             android:selectAllOnFocus="true"
             android:singleLine="true"

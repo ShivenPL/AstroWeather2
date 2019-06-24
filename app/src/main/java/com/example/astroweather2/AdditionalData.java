@@ -1,6 +1,11 @@
 package com.example.astroweather2;
 
+import android.content.ContentValues;
+import android.content.Context;
 import android.content.SharedPreferences;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteOpenHelper;
 import android.graphics.Typeface;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -24,6 +29,7 @@ import java.text.DateFormat;
 import java.util.Locale;
 
 import static java.lang.Double.parseDouble;
+import static java.lang.Integer.parseInt;
 
 public class AdditionalData extends Fragment {
 
@@ -53,9 +59,17 @@ public class AdditionalData extends Fragment {
 
 
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
-        city = sharedPreferences.getString("city", "Lodz");
-        city = city + ", PL";
-        taskLoadUp(city);
+        city = sharedPreferences.getString("city", "Lodz,PL");
+        DataBaseAdditional dbHelper = new DataBaseAdditional(getContext());
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        String querys = "SELECT * FROM tableAdditional";
+        Cursor cursor = db.rawQuery(querys, null);
+        if(cursor.moveToLast())
+        {
+            onstart();
+        }
+        else
+            taskLoadUp(city);
 
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -67,8 +81,7 @@ public class AdditionalData extends Fragment {
                         swipeRefreshLayout.setRefreshing(false);
 
                         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
-                        city = sharedPreferences.getString("city", "Lodz");
-                        city = city + ", PL";
+                        city = sharedPreferences.getString("city", "Lodz,PL");
                         taskLoadUp(city);
                     }
                 }, 1500);
@@ -82,10 +95,48 @@ public class AdditionalData extends Fragment {
     @Override
     public void onResume() {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
-        String city2 = sharedPreferences.getString("city", "Lodz") + ", PL";
+        String city2 = sharedPreferences.getString("city", "Lodz,PL");
         if(city.equals(city2)){}
         else {taskLoadUp(city2); city = city2;}
         super.onResume();
+    }
+
+    public void onstart() {
+        DataBaseAdditional dbHelper = new DataBaseAdditional(getContext());
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        String querys = "SELECT * FROM tableAdditional";
+        Cursor cursor = db.rawQuery(querys, null);
+
+        if(cursor.moveToLast())
+        {
+            SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
+            cityField.setText(cursor.getString(1));
+            updatedField.setText(cursor.getString(2));
+            String temperatureChoice = sharedPreferences.getString("temperature", "C");
+            if(temperatureChoice.equals("C"))
+                currentTemperatureField.setText(String.format("%.2f", parseDouble(cursor.getString(3))) + "°C");
+            else
+                currentTemperatureField.setText(String.format("%.2f", parseDouble(cursor.getString(3)) * 1.8 + 32) + "°F");
+
+            weatherIcon.setText(cursor.getString(4));
+
+            String windSpeed = cursor.getString(5);
+            String windDeg = cursor.getString(6);
+
+            String windInfoSpeed = sharedPreferences.getString("wind", "ms");
+
+            if(windInfoSpeed.equals("ms"))
+                wind_info.setText("Prędkość: " + windSpeed + " m/s, " + degToDirection(parseDouble(windDeg)));
+            else if(windInfoSpeed.equals("kmh"))
+                wind_info.setText("Prędkość: " + String.format("%.2f",(parseDouble(windSpeed) * 3.6)) + " km/h, " + degToDirection(parseDouble(windDeg)));
+            else
+                wind_info.setText("Prędkość: " + String.format("%.2f",(parseDouble(windSpeed) * 2.23)) + " mph, " + degToDirection(parseDouble(windDeg)));
+
+            humidity_field.setText("Wilgotność: " + cursor.getString(7) + "%");
+
+            visible_field.setText("Zachmurzenie: " + cursor.getString(8) + "%");
+
+        }
     }
 
     public void taskLoadUp(String query) {
@@ -186,6 +237,28 @@ public class AdditionalData extends Fragment {
                     else
                         currentTemperatureField.setText(String.format("%.2f", main.getDouble("temp") * 1.8 + 32) + "°F");
 
+                    DataBaseAdditional dbHelper = new DataBaseAdditional(getContext());
+                    SQLiteDatabase db = dbHelper.getWritableDatabase();
+                    ContentValues values = new ContentValues();
+
+                    values.put("cities", json.getString("name").toUpperCase(Locale.US) + ", " + json.getJSONObject("sys").getString("country"));
+                    values.put("updateF", df.format(new Date(json.getLong("dt") * 1000)));
+                    values.put("temperature", main.getDouble("temp"));
+                    values.put("weatherI", (Html.fromHtml(Function.setWeatherIcon(details.getInt("id"),
+                            json.getJSONObject("sys").getLong("sunrise") * 1000,
+                            json.getJSONObject("sys").getLong("sunset") * 1000))).toString());
+                    values.put("windSpeed", wind.getString("speed"));
+                    values.put("windDeg", wind.getString("deg"));
+                    values.put("humidity", main.getString("humidity"));
+                    values.put("visible", clouds.getString("all"));
+
+                    long newRowId = db.insert("tableAdditional", null, values);
+
+                    if(newRowId == -1)
+                    {}
+                    else
+                        Toast.makeText(getActivity(), "Zapisano do bazy!", Toast.LENGTH_SHORT).show();
+
                     loader.setVisibility(View.GONE);
 
                 }
@@ -198,5 +271,33 @@ public class AdditionalData extends Fragment {
 
 
 
+    }
+}
+
+class DataBaseAdditional extends SQLiteOpenHelper {
+    private static final String TABLE_NAME = "tableAdditional";
+    private static final String SQL_CREATE_ENTRIES = "CREATE TABLE " + TABLE_NAME + " (ID INTEGER PRIMARY KEY AUTOINCREMENT, cities TEXT, updateF TEXT, temperature TEXT, weatherI TEXT, windSpeed TEXT, windDeg TEXT, humidity TEXT, visible TEXT)";
+    private static final String SQL_DELETE_ENTRIES = "DROP TABLE IF EXISTS " + TABLE_NAME;
+
+
+    public DataBaseAdditional(Context context) {
+        super(context, TABLE_NAME, null, 1);
+    }
+    public void onCreate(SQLiteDatabase db) {
+        db.execSQL(SQL_CREATE_ENTRIES);
+    }
+    public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+        db.execSQL(SQL_DELETE_ENTRIES);
+        onCreate(db);
+    }
+    public void onDowngrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+        onUpgrade(db, oldVersion, newVersion);
+    }
+
+    public Cursor getItem(){
+        SQLiteDatabase db = this.getWritableDatabase();
+        String query = "SELECT * FROM tableAdditional";
+        Cursor data = db.rawQuery(query, null);
+        return data;
     }
 }

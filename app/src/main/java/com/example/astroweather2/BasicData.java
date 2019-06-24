@@ -1,6 +1,11 @@
 package com.example.astroweather2;
 
+import android.content.ContentValues;
+import android.content.Context;
 import android.content.SharedPreferences;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteOpenHelper;
 import android.graphics.Typeface;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -23,8 +28,11 @@ import org.json.JSONObject;
 
 import java.sql.Date;
 import java.text.DateFormat;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 
+import static java.lang.Double.parseDouble;
 import static java.lang.Integer.parseInt;
 
 public class BasicData extends Fragment {
@@ -54,9 +62,17 @@ public class BasicData extends Fragment {
         weatherIcon.setTypeface(weatherFont);
 
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
-        city = sharedPreferences.getString("city", "Lodz");
-        city = city + ", PL";
-        taskLoadUp(city);
+        city = sharedPreferences.getString("city", "Lodz,PL");
+        DataBaseBasic dbHelper = new DataBaseBasic(getContext());
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        String querys = "SELECT * FROM tableBasic";
+        Cursor cursor = db.rawQuery(querys, null);
+        if(cursor.moveToLast())
+        {
+            onstart();
+        }
+        else
+            taskLoadUp(city);
 
 
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -69,8 +85,7 @@ public class BasicData extends Fragment {
                         swipeRefreshLayout.setRefreshing(false);
 
                         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
-                        city = sharedPreferences.getString("city", "Lodz");
-                        city = city + ", PL";
+                        city = sharedPreferences.getString("city", "Lodz,PL");
                         taskLoadUp(city);
                     }
                 }, 1500);
@@ -86,10 +101,36 @@ public class BasicData extends Fragment {
     @Override
     public void onResume() {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
-        String city2 = sharedPreferences.getString("city", "Lodz") + ", PL";
+        String city2 = sharedPreferences.getString("city", "Lodz,PL");
         if(city.equals(city2)){}
         else {taskLoadUp(city2); city = city2;}
         super.onResume();
+    }
+
+    public void onstart() {
+        DataBaseBasic dbHelper = new DataBaseBasic(getContext());
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        String querys = "SELECT * FROM tableBasic";
+        Cursor cursor = db.rawQuery(querys, null);
+
+        if(cursor.moveToLast())
+        {
+            SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
+            cityField.setText(cursor.getString(1));
+            detailsField.setText(cursor.getString(2));
+            String temperatureChoice = sharedPreferences.getString("temperature", "C");
+            if(temperatureChoice.equals("C"))
+                currentTemperatureField.setText(String.format("%.2f", parseDouble(cursor.getString(3))) + "°C");
+            else
+                currentTemperatureField.setText(String.format("%.2f", parseDouble(cursor.getString(3)) * 1.8 + 32) + "°F");
+            String pressureChoice = sharedPreferences.getString("pressure", "hpa");
+            if(pressureChoice.equals("hpa"))
+                pressure_field.setText("Ciśnienie: " + cursor.getString(4) + " hPa");
+            else
+                pressure_field.setText("Ciśnienie: " + String.format("%.2f",(parseInt(cursor.getString(4)) / 33.86)) + " in. Hg");
+            updatedField.setText(cursor.getString(5));
+            weatherIcon.setText(cursor.getString(6));
+        }
     }
 
     public void taskLoadUp(String query) {
@@ -98,6 +139,7 @@ public class BasicData extends Fragment {
             task.execute(query);
         } else {
             Toast.makeText(getActivity(), "No Internet Connection", Toast.LENGTH_LONG).show();
+            onstart();
         }
     }
 
@@ -144,6 +186,27 @@ public class BasicData extends Fragment {
                             json.getJSONObject("sys").getLong("sunrise") * 1000,
                             json.getJSONObject("sys").getLong("sunset") * 1000)));
 
+                    DataBaseBasic dbHelper = new DataBaseBasic(getContext());
+                    SQLiteDatabase db = dbHelper.getWritableDatabase();
+                    ContentValues values = new ContentValues();
+
+                    values.put("cities", json.getString("name").toUpperCase(Locale.US) + ", " + json.getJSONObject("sys").getString("country"));
+                    values.put("details", details.getString("description").toUpperCase(Locale.US));
+                    values.put("temperature", main.getDouble("temp"));
+                    values.put("pressure", main.getString("pressure"));
+                    values.put("updateF", df.format(new Date(json.getLong("dt") * 1000)));
+                    values.put("weatherI", (Html.fromHtml(Function.setWeatherIcon(details.getInt("id"),
+                            json.getJSONObject("sys").getLong("sunrise") * 1000,
+                            json.getJSONObject("sys").getLong("sunset") * 1000))).toString());
+                    long newRowId = db.insert("tableBasic", null, values);
+
+                    if(newRowId == -1)
+                    {}
+                    else
+                        Toast.makeText(getActivity(), "Zapisano do bazy!", Toast.LENGTH_SHORT).show();
+
+
+
                     loader.setVisibility(View.GONE);
 
                 }
@@ -158,3 +221,32 @@ public class BasicData extends Fragment {
 
     }
 }
+
+class DataBaseBasic extends SQLiteOpenHelper {
+    private static final String TABLE_NAME = "tableBasic";
+    private static final String SQL_CREATE_ENTRIES = "CREATE TABLE " + TABLE_NAME + " (ID INTEGER PRIMARY KEY AUTOINCREMENT, cities TEXT, details TEXT, temperature TEXT, pressure TEXT, updateF TEXT, weatherI TEXT)";
+    private static final String SQL_DELETE_ENTRIES = "DROP TABLE IF EXISTS " + TABLE_NAME;
+
+
+    public DataBaseBasic(Context context) {
+        super(context, TABLE_NAME, null, 1);
+    }
+    public void onCreate(SQLiteDatabase db) {
+        db.execSQL(SQL_CREATE_ENTRIES);
+    }
+    public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+        db.execSQL(SQL_DELETE_ENTRIES);
+        onCreate(db);
+    }
+    public void onDowngrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+        onUpgrade(db, oldVersion, newVersion);
+    }
+
+    public Cursor getItem(){
+        SQLiteDatabase db = this.getWritableDatabase();
+        String query = "SELECT * FROM tableBasic";
+        Cursor data = db.rawQuery(query, null);
+        return data;
+    }
+}
+
