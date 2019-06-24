@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#3F51B5"
+    android:padding="20dp">
+
+    <TextView
+        android:id="@+id/powitanie"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:text="Witaj!"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textColor="#FFFFFF" />
+
+    <TextView
+        android:id="@+id/opis"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/powitanie"
+        android:layout_centerInParent="false"
+        android:layout_centerHorizontal="false"
+        android:elegantTextHeight="false"
+        android:freezesText="false"
+        android:text="Na sam początek wybierz swoje ulubione miasta!"
+        android:textAlignment="center"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textColor="#FFFFFF" />
+
+    <TextView
+        android:id="@+id/hint"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignWithParentIfMissing="true"
+        android:layout_below="@+id/opis"
+        android:layout_alignParentStart="false"
+        android:layout_alignParentTop="false"
+        android:layout_alignParentRight="true"
+        android:layout_centerInParent="false"
+        android:layout_centerHorizontal="false"
+        android:layout_centerVertical="false"
+        android:elegantTextHeight="false"
+        android:freezesText="false"
+        android:text="np. Lodz,PL"
+        android:textAlignment="center"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textColor="#FFFFFF" />
+
+    <EditText
+        android:id="@+id/cityOne"
+        android:textColor="#FFFFFF"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/hint"
+        android:ems="10"
+        android:inputType="textPersonName"
+        android:text="Lodz,PL" />
+
+    <EditText
+        android:id="@+id/cityTwo"
+        android:textColor="#FFFFFF"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/cityOne"
+        android:ems="10"
+        android:inputType="textPersonName"
+        android:text="Poznan,PL" />
+
+    <EditText
+        android:id="@+id/cityThree"
+        android:textColor="#FFFFFF"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/cityTwo"
+        android:ems="10"
+        android:inputType="textPersonName"
+        android:text="Warszawa,PL" />
+
+    <EditText
+        android:id="@+id/cityFour"
+        android:textColor="#FFFFFF"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/cityThree"
+        android:ems="10"
+        android:inputType="textPersonName"
+        android:text="Krakow,PL" />
+
+    <Button
+        android:id="@+id/buttonOk"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignWithParentIfMissing="false"
+        android:layout_below="@+id/cityFour"
+        android:layout_centerInParent="true"
+        android:text="Potwierdź" />
+
+
+</RelativeLayout>

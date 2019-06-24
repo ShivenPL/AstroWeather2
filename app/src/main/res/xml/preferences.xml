@@ -12,6 +12,10 @@
             android:singleLine="true"
             android:title="Podaj miasto"
             android:inputType="text"/>
+        <ListPreference
+            android:key="listOfCities"
+            android:title="Ulubione miasta"
+            android:summary="%s"/>
     </PreferenceCategory>
 
     <PreferenceCategory android:title="Jednostki miary">

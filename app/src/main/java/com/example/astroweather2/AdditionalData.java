@@ -59,7 +59,23 @@ public class AdditionalData extends Fragment {
 
 
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
-        city = sharedPreferences.getString("city", "Lodz,PL");
+        if(sharedPreferences.getString("city", "Lodz,PL") != "" && sharedPreferences.getString("listOfCities", "") == "")
+        {
+            city = sharedPreferences.getString("city", "Lodz,PL");
+            //sharedPreferences.edit().putString("listOfCities", "").commit();
+        }
+        else if(sharedPreferences.getString("listOfCities", "") != "" && sharedPreferences.getString("city", "Lodz,PL") == "")
+        {
+            city = sharedPreferences.getString("listOfCities", "");
+            //sharedPreferences.edit().putString("city", "").commit();
+        }
+        else if(sharedPreferences.getString("listOfCities", "") != "" && sharedPreferences.getString("city", "Lodz,PL") != "")
+        {
+            city = sharedPreferences.getString("listOfCities", "");
+            sharedPreferences.edit().putString("city", "").commit();
+        }
+        else
+            city = "";
         DataBaseAdditional dbHelper = new DataBaseAdditional(getContext());
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         String querys = "SELECT * FROM tableAdditional";
@@ -81,7 +97,23 @@ public class AdditionalData extends Fragment {
                         swipeRefreshLayout.setRefreshing(false);
 
                         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
-                        city = sharedPreferences.getString("city", "Lodz,PL");
+                        if(sharedPreferences.getString("city", "Lodz,PL") != "" && sharedPreferences.getString("listOfCities", "") == "")
+                        {
+                            city = sharedPreferences.getString("city", "Lodz,PL");
+                            //sharedPreferences.edit().putString("listOfCities", "").commit();
+                        }
+                        else if(sharedPreferences.getString("listOfCities", "") != "" && sharedPreferences.getString("city", "Lodz,PL") == "")
+                        {
+                            city = sharedPreferences.getString("listOfCities", "");
+                            //sharedPreferences.edit().putString("city", "").commit();
+                        }
+                        else if(sharedPreferences.getString("listOfCities", "") != "" && sharedPreferences.getString("city", "Lodz,PL") != "")
+                        {
+                            city = sharedPreferences.getString("listOfCities", "");
+                            sharedPreferences.edit().putString("city", "").commit();
+                        }
+                        else
+                            city = "";
                         taskLoadUp(city);
                     }
                 }, 1500);
@@ -95,7 +127,24 @@ public class AdditionalData extends Fragment {
     @Override
     public void onResume() {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
-        String city2 = sharedPreferences.getString("city", "Lodz,PL");
+        String city2;
+        if(sharedPreferences.getString("city", "Lodz,PL") != "" && sharedPreferences.getString("listOfCities", "") == "")
+        {
+            city2 = sharedPreferences.getString("city", "Lodz,PL");
+            //sharedPreferences.edit().putString("listOfCities", "").commit();
+        }
+        else if(sharedPreferences.getString("listOfCities", "") != "" && sharedPreferences.getString("city", "Lodz,PL") == "")
+        {
+            city2 = sharedPreferences.getString("listOfCities", "");
+            //sharedPreferences.edit().putString("city", "").commit();
+        }
+        else if(sharedPreferences.getString("listOfCities", "") != "" && sharedPreferences.getString("city", "Lodz,PL") != "")
+        {
+            city2 = sharedPreferences.getString("listOfCities", "");
+            sharedPreferences.edit().putString("city", "").commit();
+        }
+        else
+            city2 = "";
         if(city.equals(city2)){}
         else {taskLoadUp(city2); city = city2;}
         super.onResume();
