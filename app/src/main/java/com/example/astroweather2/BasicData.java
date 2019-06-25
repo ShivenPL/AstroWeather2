@@ -251,8 +251,8 @@ public class BasicData extends Fragment {
 
                     if(newRowId == -1)
                     {}
-                    else
-                        Toast.makeText(getActivity(), "Zapisano do bazy!", Toast.LENGTH_SHORT).show();
+
+
 
 
 

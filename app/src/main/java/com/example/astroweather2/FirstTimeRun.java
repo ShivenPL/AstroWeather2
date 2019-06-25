@@ -43,7 +43,7 @@ public class FirstTimeRun extends AppCompatActivity {
                 if(newRowId == -1)
                 {}
                 else
-                    Toast.makeText(FirstTimeRun.this,"Dodano do bazy!" ,Toast.LENGTH_SHORT).show();
+                    Toast.makeText(FirstTimeRun.this,"Dodano ulubione miasta!" ,Toast.LENGTH_SHORT).show();
             }
         });
 

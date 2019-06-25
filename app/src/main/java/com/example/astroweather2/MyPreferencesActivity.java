@@ -34,7 +34,7 @@ public class MyPreferencesActivity extends PreferenceActivity {
             Cursor cursor = db.rawQuery(querys, null);
             if(cursor.moveToLast())
             {
-                CharSequence[] entries = {"BRAK", cursor.getString(1), cursor.getString(2), cursor.getString(3), cursor.getString(4) };
+                CharSequence[] entries = {"Brak wybranego miasta", cursor.getString(1), cursor.getString(2), cursor.getString(3), cursor.getString(4) };
                 CharSequence[] entryValues = {"", cursor.getString(1), cursor.getString(2), cursor.getString(3), cursor.getString(4) };
                 listPreference.setEntries(entries);
                 listPreference.setEntryValues(entryValues);
