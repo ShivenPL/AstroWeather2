@@ -151,7 +151,31 @@ public class BasicData extends Fragment {
         }
         else
             city2 = "";
-        if(city.equals(city2)){}
+        if(city.equals(city2)){
+            DataBaseBasic dbHelper = new DataBaseBasic(getContext());
+            SQLiteDatabase db = dbHelper.getWritableDatabase();
+            String querys = "SELECT * FROM tableBasic";
+            Cursor cursor = db.rawQuery(querys, null);
+
+            if(cursor.moveToLast())
+            {
+                sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
+                cityField.setText(cursor.getString(1));
+                detailsField.setText(cursor.getString(2));
+                String temperatureChoice = sharedPreferences.getString("temperature", "C");
+                if(temperatureChoice.equals("C"))
+                    currentTemperatureField.setText(String.format("%.2f", parseDouble(cursor.getString(3))) + "°C");
+                else
+                    currentTemperatureField.setText(String.format("%.2f", parseDouble(cursor.getString(3)) * 1.8 + 32) + "°F");
+                String pressureChoice = sharedPreferences.getString("pressure", "hpa");
+                if(pressureChoice.equals("hpa"))
+                    pressure_field.setText("Ciśnienie: " + cursor.getString(4) + " hPa");
+                else
+                    pressure_field.setText("Ciśnienie: " + String.format("%.2f",(parseInt(cursor.getString(4)) / 33.86)) + " in. Hg");
+                updatedField.setText(cursor.getString(5));
+                weatherIcon.setText(cursor.getString(6));
+            }
+        }
         else {taskLoadUp(city2); city = city2;}
         super.onResume();
     }

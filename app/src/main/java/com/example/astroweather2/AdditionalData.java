@@ -145,7 +145,43 @@ public class AdditionalData extends Fragment {
         }
         else
             city2 = "";
-        if(city.equals(city2)){}
+        if(city.equals(city2)){
+            DataBaseAdditional dbHelper = new DataBaseAdditional(getContext());
+            SQLiteDatabase db = dbHelper.getWritableDatabase();
+            String querys = "SELECT * FROM tableAdditional";
+            Cursor cursor = db.rawQuery(querys, null);
+
+            if(cursor.moveToLast())
+            {
+                sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
+                cityField.setText(cursor.getString(1));
+                updatedField.setText(cursor.getString(2));
+                String temperatureChoice = sharedPreferences.getString("temperature", "C");
+                if(temperatureChoice.equals("C"))
+                    currentTemperatureField.setText(String.format("%.2f", parseDouble(cursor.getString(3))) + "°C");
+                else
+                    currentTemperatureField.setText(String.format("%.2f", parseDouble(cursor.getString(3)) * 1.8 + 32) + "°F");
+
+                weatherIcon.setText(cursor.getString(4));
+
+                String windSpeed = cursor.getString(5);
+                String windDeg = cursor.getString(6);
+
+                String windInfoSpeed = sharedPreferences.getString("wind", "ms");
+
+                if(windInfoSpeed.equals("ms"))
+                    wind_info.setText("Prędkość: " + windSpeed + " m/s, " + degToDirection(parseDouble(windDeg)));
+                else if(windInfoSpeed.equals("kmh"))
+                    wind_info.setText("Prędkość: " + String.format("%.2f",(parseDouble(windSpeed) * 3.6)) + " km/h, " + degToDirection(parseDouble(windDeg)));
+                else
+                    wind_info.setText("Prędkość: " + String.format("%.2f",(parseDouble(windSpeed) * 2.23)) + " mph, " + degToDirection(parseDouble(windDeg)));
+
+                humidity_field.setText("Wilgotność: " + cursor.getString(7) + "%");
+
+                visible_field.setText("Zachmurzenie: " + cursor.getString(8) + "%");
+
+            }
+        }
         else {taskLoadUp(city2); city = city2;}
         super.onResume();
     }

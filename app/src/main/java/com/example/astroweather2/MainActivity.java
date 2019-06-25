@@ -24,8 +24,7 @@ public class MainActivity extends AppCompatActivity {
         if (isFirstRun) {
             //show sign up activity
             startActivity(new Intent(MainActivity.this, FirstTimeRun.class));
-            Toast.makeText(MainActivity.this, "Run only once", Toast.LENGTH_LONG)
-                    .show();
+
         }
 
 

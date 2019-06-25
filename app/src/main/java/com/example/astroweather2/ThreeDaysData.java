@@ -157,7 +157,58 @@ public class ThreeDaysData extends Fragment {
         }
         else
             city2 = "";
-        if(city.equals(city2)){}
+        if(city.equals(city2)){
+            DataBaseThreeDays dbHelper = new DataBaseThreeDays(getContext());
+            SQLiteDatabase db = dbHelper.getWritableDatabase();
+            String querys = "SELECT * FROM tableThreeDays";
+            Cursor cursor = db.rawQuery(querys, null);
+
+            if(cursor.moveToLast())
+            {
+                String getDay, destDay;
+
+                sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
+
+                cityField.setText(cursor.getString(1));
+
+                String temperatureChoice = sharedPreferences.getString("temperature", "C");
+
+
+                dayFirstDate.setText(cursor.getString(2));
+                weatherIcon1.setText(cursor.getString(3));
+                if(temperatureChoice.equals("C"))
+                {
+                    temperatureDayOne.setText(String.format("%.2f", parseDouble(cursor.getString(4))) + "°C");
+                }
+                else
+                {
+                    temperatureDayOne.setText(String.format("%.2f", parseDouble(cursor.getString(4)) * 1.8 + 32) + "°F");
+                }
+
+                daySecondDate.setText(cursor.getString(5));
+                weatherIcon2.setText(cursor.getString(6));
+                if(temperatureChoice.equals("C"))
+                {
+                    temperatureDayTwo.setText(String.format("%.2f", parseDouble(cursor.getString(7))) + "°C");
+                }
+                else
+                {
+                    temperatureDayTwo.setText(String.format("%.2f", parseDouble(cursor.getString(7)) * 1.8 + 32) + "°F");
+                }
+
+                dayThirdDate.setText( cursor.getString(8));
+                weatherIcon3.setText( cursor.getString(9));
+                if(temperatureChoice.equals("C"))
+                {
+                    temperatureDayThree.setText(String.format("%.2f", parseDouble(cursor.getString(10))) + "°C");
+                }
+                else
+                {
+                    temperatureDayThree.setText(String.format("%.2f", parseDouble(cursor.getString(10)) * 1.8 + 32) + "°F");
+                }
+
+            }
+        }
         else {taskLoadUp(city2); city = city2;}
         super.onResume();
     }
